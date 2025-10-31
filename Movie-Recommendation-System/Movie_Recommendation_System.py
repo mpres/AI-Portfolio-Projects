@@ -3,6 +3,7 @@ import requests
 from pathlib import Path
 import zipfile
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
 
 
 def explore_dir(path):
@@ -13,4 +14,7 @@ def explore_dir(path):
 
 ### 10/31/25 grab files and merge them into a useful structure, one file using pandas
 
-!pwd
+movies_df = pd.read_csv('data/ml-latest-small/movies.csv')
+tags_df = pd.read_csv('data/ml-latest-small/tags.csv')
+rating_df = pd.read_csv('data/ml-latest-small/ratings.csv')
+links_df = pd.read_csv('data/ml-latest-small/ratings.csv')
