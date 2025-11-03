@@ -42,3 +42,6 @@ MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
 df = df.join(MLB_df)
 # clean data frame, pop
 df = df.drop('(no genres listed)', axis=1)
+
+#Train Test Split
+train_df, test_df = train_test_split(df,test_size=.2,train_size=.8)
