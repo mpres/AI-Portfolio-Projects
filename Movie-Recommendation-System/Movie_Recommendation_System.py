@@ -26,3 +26,16 @@ df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = '
 le = LabelEncoder()
 df['movieId'] = le.fit_transform(df['movieId'])
 df['userId'] = le.fit_transform(df['userId'])
+
+#create multiLabelBinarizer
+mlb = MultiLabelBinarizer()
+
+# create list of genres via the "|", and take out the old genres field
+genres_list = df.pop('genres').str.split('|')
+
+#create MLB data 
+MLB_data = mlb.fit_transform(genres_list)
+#create MLB data frame
+MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
+# join MLB to main data frame by the 
+df = df.join(MLB_df)
