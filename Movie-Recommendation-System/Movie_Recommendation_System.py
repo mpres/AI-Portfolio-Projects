@@ -4,6 +4,7 @@ from pathlib import Path
 import zipfile
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
+from sklearn.model_selection import train_test_split
 
 
 def explore_dir(path):
@@ -39,3 +40,5 @@ MLB_data = mlb.fit_transform(genres_list)
 MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
 # join MLB to main data frame by the 
 df = df.join(MLB_df)
+# clean data frame, pop
+df = df.drop('(no genres listed)', axis=1)
