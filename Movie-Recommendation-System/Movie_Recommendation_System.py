@@ -18,3 +18,6 @@ movies_df = pd.read_csv('data/ml-latest-small/movies.csv')
 tags_df = pd.read_csv('data/ml-latest-small/tags.csv')
 rating_df = pd.read_csv('data/ml-latest-small/ratings.csv')
 links_df = pd.read_csv('data/ml-latest-small/ratings.csv')
+
+#merge files
+df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
