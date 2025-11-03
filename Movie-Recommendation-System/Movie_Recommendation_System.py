@@ -1,6 +1,9 @@
 import os
 import requests
 from pathlib import Path
+from surprise import Dataset, Reader
+from surprise.prediction_algorithms.matrix_factorization import SVD
+from surprise import accuracy
 import zipfile
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
@@ -45,3 +48,8 @@ df = df.drop('(no genres listed)', axis=1)
 
 #Train Test Split
 train_df, test_df = train_test_split(df,test_size=.2,train_size=.8)
+
+#Get reader,data and trainset
+reader = Reader(rating_scale = (0.5,5))
+data = Dataset.load_from_df(train_df[['userId','movieId','rating']],reader )
+train_set = data.build_full_trainset()
