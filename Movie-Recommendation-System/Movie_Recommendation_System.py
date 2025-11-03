@@ -21,3 +21,8 @@ links_df = pd.read_csv('data/ml-latest-small/ratings.csv')
 
 #merge files
 df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
+
+#create encoder for user and movies
+le = LabelEncoder()
+df['movieId'] = le.fit_transform(df['movieId'])
+df['userId'] = le.fit_transform(df['userId'])
