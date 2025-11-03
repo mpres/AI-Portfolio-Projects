@@ -53,3 +53,10 @@ train_df, test_df = train_test_split(df,test_size=.2,train_size=.8)
 reader = Reader(rating_scale = (0.5,5))
 data = Dataset.load_from_df(train_df[['userId','movieId','rating']],reader )
 train_set = data.build_full_trainset()
+
+#Create model svc
+model_svd = SVD()
+model_svd.fit(train_set)
+
+prediction_svd = model_svd.test(train_set.build_anti_testset())
+accuracy.rmse(prediction_svd)
