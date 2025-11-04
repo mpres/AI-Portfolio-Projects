@@ -31,6 +31,9 @@ le = LabelEncoder()
 df['movieId'] = le.fit_transform(df['movieId'])
 df['userId'] = le.fit_transform(df['userId'])
 
+#add user and movie encoders
+user_encoder = LabelEncoder()
+movie_encoder = LabelEncoder()
 #create multiLabelBinarizer
 mlb = MultiLabelBinarizer()
 
@@ -60,3 +63,28 @@ model_svd.fit(train_set)
 
 prediction_svd = model_svd.test(train_set.build_anti_testset())
 accuracy.rmse(prediction_svd)
+
+
+#create function to get top movie recommendations
+
+def get_best_n_recommendations(user_id: str, n: int = 5):
+  ''' user_id will represent a type string and will be an id found in the
+      user_df
+      n is a "int" type and will return the amount recommendations returned
+  '''
+  # Get the amount of movies this user has seenmovies this user has seen
+  user_movies = df[df['userId'] == user_id]['movieID'].unique()
+  # return all the movies minus the ones' this user has seen
+  all_movies = df['movie.'].unqiue()
+  movies_to_predict = list(set(all_movies) - set(user_movies))
+  # use the model to return the amount of movies to see
+  user_movie_pairs = [(user_id,movie_id, 0) for movie_id in movies_to_predict]
+  predictions_cf = model_svd.test(user_movie_pairs)
+
+  top_n_recommendations = sorted(predictions_cf, key = lambda x: x.est, reverse = True)[:n]
+
+  top_n_movie_ids = [int(pred.ii) for pred in top_n_recommendations]
+
+  top_n_movies = movie_encoder.inverse_transform(top_n_movie_ids)
+  
+  return top_n_movies
