@@ -37,6 +37,10 @@ movie_encoder = LabelEncoder()
 #create multiLabelBinarizer
 mlb = MultiLabelBinarizer()
 
+#fit label encoders
+df['userId'] = user_encoder.fit_transform(df['userId'])
+df['movieId'] = movie_encoder.fit_transform(df['movieId'])
+
 # create list of genres via the "|", and take out the old genres field
 genres_list = df.pop('genres').str.split('|')
 
@@ -72,19 +76,22 @@ def get_best_n_recommendations(user_id: str, n: int = 5):
       user_df
       n is a "int" type and will return the amount recommendations returned
   '''
-  # Get the amount of movies this user has seenmovies this user has seen
-  user_movies = df[df['userId'] == user_id]['movieID'].unique()
+  # Get the amount of movies this user has 
+  user_movies = df[df['userId'] == user_id]['movieId'].unique()
   # return all the movies minus the ones' this user has seen
-  all_movies = df['movie.'].unqiue()
+  all_movies = df['movieId'].unique()
+
   movies_to_predict = list(set(all_movies) - set(user_movies))
   # use the model to return the amount of movies to see
   user_movie_pairs = [(user_id,movie_id, 0) for movie_id in movies_to_predict]
+
   predictions_cf = model_svd.test(user_movie_pairs)
 
   top_n_recommendations = sorted(predictions_cf, key = lambda x: x.est, reverse = True)[:n]
 
-  top_n_movie_ids = [int(pred.ii) for pred in top_n_recommendations]
+  top_n_movie_ids = [int(pred.iid) for pred in top_n_recommendations]
 
   top_n_movies = movie_encoder.inverse_transform(top_n_movie_ids)
   
   return top_n_movies
+
