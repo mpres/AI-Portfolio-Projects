@@ -51,3 +51,31 @@ def explore_dir(path):
   """ This would explore the directory and return the outline of it """
   for dir_path, dir_names, file_names in os.walk(path):
     print(f"Directory count {len(dir_names)}, movies count {len(file_names)} in '{file_names}'")
+
+
+# 11/5/25
+def get_best_n_recommendations(df: pd.DataFrame, user_id: str, n: int = 5):
+  ''' Parameters: 1. df needs to be a processed.
+                  2. user_id will represent a type string and will be an id found in the
+                    user_df
+                  3. n is a "int" type and will return the amount recommendations returned
+      
+  '''
+  # Get the amount of movies this user has
+  user_movies = df[df['userId'] == user_id]['movieId'].unique()
+  # return all the movies minus the ones' this user has seen
+  all_movies = df['movieId'].unique()
+
+  movies_to_predict = list(set(all_movies) - set(user_movies))
+  # use the model to return the amount of movies to see
+  user_movie_pairs = [(user_id,movie_id, 0) for movie_id in movies_to_predict]
+
+  predictions_cf = model_svd.test(user_movie_pairs)
+
+  top_n_recommendations = sorted(predictions_cf, key = lambda x: x.est, reverse = True)[:n]
+
+  top_n_movie_ids = [int(pred.iid) for pred in top_n_recommendations]
+
+  top_n_movies = movie_encoder.inverse_transform(top_n_movie_ids)
+
+  return top_n_movies
