@@ -6,6 +6,10 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
       Outline:    1. merge the dataframes (movies and ratings)
                   2. encode ids
                   3. create encoder objects and multi-label-binarizer
+                  4. fit label encoders, process "|" column
+                  5. Process MLB
+                  6. return processed df
+
 
   '''
   df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
@@ -24,8 +28,21 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
   #3 create multiLabelBinarizer 
   mlb = MultiLabelBinarizer()
 
+  #4 fit label encoders
+  df['userId'] = user_encoder.fit_transform(df['userId'])
+  df['movieId'] = movie_encoder.fit_transform(df['movieId'])
+  # create list of genres via the "|", and take out the old genres field
+  genres_list = df.pop('genres').str.split('|')
+
+  #5, create MLB data
+  MLB_data = mlb.fit_transform(genres_list)
+  #create MLB data frame
+  MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
+  # join MLB to main data frame by the
+  df = df.join(MLB_df)
+  # clean data frame, pop
+  df = df.drop('(no genres listed)', axis=1)
 
   return df
-
 
 
