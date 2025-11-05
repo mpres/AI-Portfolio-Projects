@@ -45,4 +45,9 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
 
   return df
 
+#11/5/25, depends 
 
+def explore_dir(path):
+  """ This would explore the directory and return the outline of it """
+  for dir_path, dir_names, file_names in os.walk(path):
+    print(f"Directory count {len(dir_names)}, movies count {len(file_names)} in '{file_names}'")
