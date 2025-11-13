@@ -2,7 +2,7 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
   ''' Parameters: 1. 'movies_df' is a raw data frame
                   2. 'ratings_df' is a raw dta frame
       Returns:    1. returns a processed and encoded dataframe ready for SVD algo
-      
+
       Outline:    1. merge the dataframes (movies and ratings)
                   2. encode ids
                   3. create encoder objects and multi-label-binarizer
@@ -13,19 +13,19 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
 
   '''
   df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
- 
-  #create encoder for movieId and userId 
+
+  #create encoder for movieId and userId
   le = LabelEncoder()
   df['movieId'] = le.fit_transform(df['movieId'])
   df['userId'] = le.fit_transform(df['userId'])
 
   #merge files
-  
+
   #2 add user and movie encoders
   user_encoder = LabelEncoder()
   movie_encoder = LabelEncoder()
-  
-  #3 create multiLabelBinarizer 
+
+  #3 create multiLabelBinarizer
   mlb = MultiLabelBinarizer()
 
   #4 fit label encoders
@@ -45,7 +45,7 @@ def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFra
 
   return df
 
-#11/5/25, depends 
+#11/5/25, depends
 
 def explore_dir(path):
   """ This would explore the directory and return the outline of it """
@@ -59,7 +59,7 @@ def get_best_n_recommendations(df: pd.DataFrame, user_id: str, n: int = 5):
                   2. user_id will represent a type string and will be an id found in the
                     user_df
                   3. n is a "int" type and will return the amount recommendations returned
-      
+
   '''
   # Get the amount of movies this user has
   user_movies = df[df['userId'] == user_id]['movieId'].unique()
@@ -79,3 +79,27 @@ def get_best_n_recommendations(df: pd.DataFrame, user_id: str, n: int = 5):
   top_n_movies = movie_encoder.inverse_transform(top_n_movie_ids)
 
   return top_n_movies
+
+
+def get_titles(movie_df: pd.DataFrame,ids: list) -> list:
+  '''
+  This function will return a list of titles from a list of ids
+
+  args:
+    movie_df = a data frame of movie ids with their titles
+    ids = this should be a list of movies ids you want the title to
+  results:
+    returns movies titles
+  '''
+  try:
+    
+    assert 'movieId' in movie_df.columns
+    assert 'title' in movie_df.columns
+    return movies_df[movies_df['movieId'].isin(ids)]
+
+    
+
+  except Exception as e:
+    print(f'An error occurred')
+  
+  return ""
