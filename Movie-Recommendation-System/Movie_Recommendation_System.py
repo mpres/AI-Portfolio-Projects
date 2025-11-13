@@ -44,11 +44,11 @@ df['movieId'] = movie_encoder.fit_transform(df['movieId'])
 # create list of genres via the "|", and take out the old genres field
 genres_list = df.pop('genres').str.split('|')
 
-#create MLB data 
+#create MLB data
 MLB_data = mlb.fit_transform(genres_list)
 #create MLB data frame
 MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
-# join MLB to main data frame by the 
+# join MLB to main data frame by the
 df = df.join(MLB_df)
 # clean data frame, pop
 df = df.drop('(no genres listed)', axis=1)
@@ -71,12 +71,15 @@ accuracy.rmse(prediction_svd)
 
 #create function to get top movie recommendations
 
-def get_best_n_recommendations(user_id: str, n: int = 5):
-  ''' user_id will represent a type string and will be an id found in the
-      user_df
-      n is a "int" type and will return the amount recommendations returned
+# 11/5/25
+def get_best_n_recommendations(df: pd.DataFrame, user_id: str, n: int = 5):
+  ''' Parameters: 1. df needs to be a processed.
+                  2. user_id will represent a type string and will be an id found in the
+                    user_df
+                  3. n is a "int" type and will return the amount recommendations returned
+
   '''
-  # Get the amount of movies this user has 
+  # Get the amount of movies this user has
   user_movies = df[df['userId'] == user_id]['movieId'].unique()
   # return all the movies minus the ones' this user has seen
   all_movies = df['movieId'].unique()
@@ -92,6 +95,6 @@ def get_best_n_recommendations(user_id: str, n: int = 5):
   top_n_movie_ids = [int(pred.iid) for pred in top_n_recommendations]
 
   top_n_movies = movie_encoder.inverse_transform(top_n_movie_ids)
-  
+
   return top_n_movies
 
