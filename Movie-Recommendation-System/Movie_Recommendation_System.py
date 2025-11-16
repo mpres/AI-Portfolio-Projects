@@ -8,6 +8,7 @@ import zipfile
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
 from sklearn.model_selection import train_test_split
+import time
 
 
 def explore_dir(path):
