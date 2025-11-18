@@ -10,6 +10,54 @@ from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
 from sklearn.model_selection import train_test_split
 import time
 
+#get data
+#merge files
+df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
+
+#create encoder for user and movies
+le = LabelEncoder()
+df['movieId'] = le.fit_transform(df['movieId'])
+df['userId'] = le.fit_transform(df['userId'])
+
+#add user and movie encoders
+user_encoder = LabelEncoder()
+movie_encoder = LabelEncoder()
+#create multiLabelBinarizer
+mlb = MultiLabelBinarizer()
+
+#fit label encoders
+df['userId'] = user_encoder.fit_transform(df['userId'])
+df['movieId'] = movie_encoder.fit_transform(df['movieId'])
+
+# create list of genres via the "|", and take out the old genres field
+genres_list = df.pop('genres').str.split('|')
+
+#create MLB data
+MLB_data = mlb.fit_transform(genres_list)
+#create MLB data frame
+MLB_df = pd.DataFrame(MLB_data,columns=mlb.classes_, index = df.index)
+# join MLB to main data frame by the
+df = df.join(MLB_df)
+# clean data frame, pop
+df = df.drop('(no genres listed)', axis=1)
+
+#Train Test Split
+train_df, test_df = train_test_split(df,test_size=.2,train_size=.8)
+
+#Get reader,data and trainset
+reader = Reader(rating_scale = (0.5,5))
+data = Dataset.load_from_df(train_df[['userId','movieId','rating']],reader )
+train_set = data.build_full_trainset()
+
+#Create model svc
+model_svd = SVD()
+model_svd.fit(train_set)
+
+prediction_svd = model_svd.test(train_set.build_anti_testset())
+accuracy.rmse(prediction_svd)
+
+
+
 
 def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFrame:
   ''' Parameters: 1. 'movies_df' is a raw data frame
