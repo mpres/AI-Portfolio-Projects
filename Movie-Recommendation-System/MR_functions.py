@@ -1,3 +1,16 @@
+import os
+import requests
+from pathlib import Path
+from surprise import Dataset, Reader
+from surprise.prediction_algorithms.matrix_factorization import SVD
+from surprise import accuracy
+import zipfile
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
+from sklearn.model_selection import train_test_split
+import time
+
+
 def prep_movies(movies_df: pd.DataFrame, ratings_df: pd.DataFrame) -> pd.DataFrame:
   ''' Parameters: 1. 'movies_df' is a raw data frame
                   2. 'ratings_df' is a raw dta frame
