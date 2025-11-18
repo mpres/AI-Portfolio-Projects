@@ -10,6 +10,13 @@ from sklearn.preprocessing import LabelEncoder, MultiLabelBinarizer
 from sklearn.model_selection import train_test_split
 import time
 
+#get dataframe
+movies_df = pd.read_csv('data/ml-latest-small/movies.csv')
+tags_df = pd.read_csv('data/ml-latest-small/tags.csv')
+rating_df = pd.read_csv('data/ml-latest-small/ratings.csv')
+links_df = pd.read_csv('data/ml-latest-small/ratings.csv')
+
+
 #get data
 #merge files
 df = pd.merge(rating_df,movies_df[['movieId','genres']], on = 'movieId', how = 'left')
