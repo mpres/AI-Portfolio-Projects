@@ -9,8 +9,7 @@ Example usage
 """
 
 #Needing to run this module for Jupyter Notebooks
-import nest_asyncio
-nest_asyncio.apply()
+
 
 from fastmcp import FastMCP
 
